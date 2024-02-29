@@ -166,7 +166,7 @@ mask.requires_grad = True
 
 lr = .1
 k = 6
-lda = 0.5
+lda = 0.1
 optimizer = optim.Adam([mask], lr=lr)
 losses = []
 
@@ -198,10 +198,12 @@ for i in range(50):
     mask_selected_probs = mask_output[:-1][torch.arange(len(selected_ids)), selected_ids]
     mask_logits = mask_selected_probs[(fix_input_length-num_start_token):-num_end_token].sum()
 
-    loss = mask_logits-sum(probs) + lda * (k - sum(mask))
+    loss = mask_logits-sum(probs) - lda * (sum(mask)-k)
 
     loss.backward()
     optimizer.step()
+    with torch.no_grad():
+        mask.clamp_(0,1)
 
     losses.append(loss.item())
 
