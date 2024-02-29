@@ -157,8 +157,8 @@ logits = selected_probs[(fix_input_length-num_start_token):-num_end_token].sum()
 
 mask = torch.sigmoid(torch.rand(len(input_ids))).to(dtype=torch.float32)
 mask.requires_grad = True
-mask_start = torch.ones(num_start_token); mask_output = torch.ones(num_end_token); mask_end = torch.ones(len(output_ids))
-mask_matrix = torch.diag(torch.cat((mask_start, mask, mask_output, mask_end), dim=0)).to('cuda')
+# mask_start = torch.ones(num_start_token); mask_output = torch.ones(num_end_token); mask_end = torch.ones(len(output_ids))
+# mask_matrix = torch.diag(torch.cat((mask_start, mask, mask_output, mask_end), dim=0)).to('cuda')
 
 
 # In[97]:
@@ -179,6 +179,8 @@ for i in range(50):
 
     # model.embed_tokens
     input = model.model.embed_tokens(all_ids).squeeze(0)
+    mask_start = torch.ones(num_start_token); mask_output = torch.ones(num_end_token); mask_end = torch.ones(len(output_ids))
+    mask_matrix = torch.diag(torch.cat((mask_start, mask, mask_output, mask_end), dim=0)).to('cuda')
     mask_input = torch.matmul(mask_matrix, input).unsqueeze(0)
     mask_input = input.unsqueeze(0)
     # model.layers
