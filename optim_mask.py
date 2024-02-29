@@ -164,10 +164,10 @@ mask.requires_grad = True
 # In[97]:
 
 
-lr = .1
+lr = .01
 k = 6
 s = len(mask)-1
-lda = 0.5; bta=0.5
+lda = 0.2; bta=0.1
 optimizer = optim.Adam([mask], lr=lr)
 losses = []
 
@@ -183,7 +183,7 @@ for i in range(50):
     mask_start = torch.ones(num_start_token); mask_output = torch.ones(num_end_token); mask_end = torch.ones(len(output_ids))
     mask_matrix = torch.diag(torch.cat((mask_start, mask, mask_output, mask_end), dim=0)).to('cuda')
     mask_input = torch.matmul(mask_matrix, input).unsqueeze(0)
-    mask_input = input.unsqueeze(0)
+    # mask_input = input.unsqueeze(0)
     # model.layers
     mask_input_temp = mask_input
     for i, layers in enumerate(model.model.layers):
