@@ -150,3 +150,111 @@ class ChangingSavingLogitsProcessor(LogitsProcessor):
         scores = scores + fake_scores
         self.counter += 1
         return scores # Minimally working
+    
+
+class SavingLogitsProcessorBatch(LogitsProcessor):
+    def __init__(self, batch_size, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.prob = []
+        self.batch_size = batch_size
+        self.prob = [[] for _ in range(self.batch_size)]
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+        all_prob = F.softmax(scores, dim=-1)
+        # print(all_prob.shape)
+        for i in range(self.batch_size):  
+            # aim_index = self.aim[i][self.counter].item()  
+            self.prob[i].append(torch.max(all_prob, dim=-1).values[i].item())
+        # self.prob.append(torch.max(all_prob, dim=1).item())
+        return scores # Minimally working
+    
+    
+class ChangingSavingLogitsProcessorBatch(LogitsProcessor):
+    def __init__(self, aim, batch_size, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        global no_attacking_scores
+        no_attacking_scores = []
+        self.aim = aim
+        self.counter = 0
+        self.batch_size = batch_size
+        self.prob = [[] for _ in range(self.batch_size)]
+        
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+        all_prob = F.softmax(scores, dim=-1)
+        
+        aim_index = self.aim[self.counter]
+        
+        for i in range(self.batch_size):  
+            # aim_index = self.aim[i][self.counter].item() 
+            self.prob[i].append(all_prob[i, aim_index].item())
+
+
+        fake_scores = torch.zeros_like(scores)
+        for i in range(self.batch_size):
+            # aim_index = self.aim[i][self.counter].item()
+            fake_scores[i, aim_index] = 100 
+        # print(scores.shape)
+
+        scores = scores + fake_scores 
+        self.counter += 1
+
+        return scores # Minimally working
+    
+
+class SavingLogitsProcessorAll(LogitsProcessor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.prob = []
+        self.all_prob = []
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+        all_prob = F.softmax(scores, dim=-1)
+        self.all_prob.append(all_prob)
+        self.prob.append(torch.max(all_prob).item())
+        return scores # Minimally working
+    
+
+# class ChangingSavingLogitsProcessorAll(LogitsProcessor):
+#     def __init__(self, aim, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         global no_attacking_scores
+#         no_attacking_scores = []
+#         self.aim = aim
+#         self.counter = 0
+#         self.prob = []
+#         # self.all_prob = 0
+#         self.all_prob = []
+
+
+#     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+#         print(input_ids.shape())
+#         all_prob = F.softmax(scores, dim=-1)
+#         aim_index = self.aim[self.counter]
+#         self.prob.append(all_prob[:, aim_index].item()) # select indexed prob
+#         self.all_prob = all_prob
+#         # self.all_prob.append(all_prob)
+#         fake_scores = torch.zeros_like(scores)
+#         fake_scores[:, aim_index] = 100
+#         scores = scores + fake_scores
+#         self.counter += 1
+#         print(all_prob.shape)
+#         return scores # Minimally working
+    
+class ChangingSavingLogitsProcessorAll(LogitsProcessor):
+    def __init__(self, aim, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.prob = []
+        self.all_prob = []
+        self.aim = aim
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+        print(input_ids.shape)
+        print(self.aim.shape)
+        # print(self.prob.shape)
+        all_prob = F.softmax(scores, dim=-1)
+        self.all_prob.append(all_prob)
+        self.prob.append(torch.max(all_prob).item())
+        print(all_prob.shape)
+        print(scores)
+        return scores # Minimally working
