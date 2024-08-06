@@ -404,7 +404,7 @@ class GSS():
 
 
 
-class Gradient_Sample():
+class XPrompt():
     def __init__(self, data, model, tokenizer, args):
         self.data = data
         self.model = model
