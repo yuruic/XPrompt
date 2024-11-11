@@ -9,7 +9,6 @@ import torch.optim as optim
 import torch.nn.functional as F
 from utils.process_utils import *
 from utils.text_scores import *
-from utils.text_scores import *
 import time
 
 
@@ -25,7 +24,8 @@ class Gradient_Sample():
         self.diff_dict = {'loglikelihood':[], 'tfidf':[], 'bleu':[], 'sentenceBert':[],
                     'rouge1_p':[], 'rouge1_r':[], 'rouge1_f':[],
                     'rouge2_p':[], 'rouge2_r':[], 'rouge2_f':[],
-                    'rougel_p':[], 'rougel_r':[], 'rougel_f':[],'kl':[], 'new_log':[]}
+                    'rougel_p':[], 'rougel_r':[], 'rougel_f':[],'kl':[], 'new_log':[],
+                    'response':[], 'new_responses':[]}
         self.diff_dict_keys = self.diff_dict.keys()
 
         # Creating deep copies for each dictionary
@@ -210,7 +210,8 @@ class Gradient_Sample():
             token_dict_temp['loglikelihood'] = [x/fix_logsum for x in temp_batch_logsum]
             for temp_probs in temp_batch_probs:
                 token_dict_temp['kl'].append(kl_divergence([x/sum(fix_probs) for x in fix_probs], [x/sum(temp_probs) for x in temp_probs]))
-            token_dict_temp['response'] = new_batch_response
+            token_dict_temp['new_responses'] = new_batch_response
+            token_dict_temp['response'] = fix_response
 
             for key in self.diff_dict_keys:
                 self.token_dict[key].append(token_dict_temp[key])
