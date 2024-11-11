@@ -13,18 +13,18 @@ updaten for efficient exploration in the discrete solution space.
 The official repository for [XPrompt:Explaining Large Language Model's Generation via Joint Prompt Attribution](https://arxiv.org/abs/2405.20404)
 
 
-# Installations
+## Installations
 ```
 git clone https://github.com/yuruic/XPrompt.git
 cd XPrompt
 pip3 install -r requirements.txt
 ```
-# Get joint attributions
+## Get joint attributions
 ```
 python run_baseline_padding.py --task search_token_alg --filename alpaca --test_model llama_7b 
 ```
 
-# Citation
+## Citation
 If you found any part of this code is useful in your research, please consider citing our paper:
 ```
 @misc{chang2024xpromptexplaininglargelanguagemodels,
