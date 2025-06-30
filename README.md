@@ -1,4 +1,4 @@
-# XPrompt
+# JoPA
 
 This project aims to explain the generation behavior of model outputs for any given prompt while take the joint
 effects of the prompt components into account. Assuming that removing the essential parts of the
@@ -15,8 +15,8 @@ The official repository for [XPrompt:Explaining Large Language Model's Generatio
 
 ## Installations
 ```
-git clone https://github.com/yuruic/XPrompt.git
-cd XPrompt
+git clone https://github.com/yuruic/JoPA.git
+cd JoPA
 pip3 install -r requirements.txt
 ```
 ## Get joint attributions
